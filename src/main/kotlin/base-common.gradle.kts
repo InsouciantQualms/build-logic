@@ -5,7 +5,10 @@ plugins {
 group = "dev.iq.${rootProject.name}"
 
 configurations.all {
-    resolutionStrategy.failOnVersionConflict()
+    resolutionStrategy {
+        preferProjectModules()
+        failOnVersionConflict()
+    }
 }
 
 tasks.withType<Test> {
