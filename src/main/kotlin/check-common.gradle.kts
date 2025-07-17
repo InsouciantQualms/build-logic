@@ -5,10 +5,11 @@ plugins {
 
 tasks.test {
     exclude("**/*IntegrationTest*")
+    exclude("**/*ContainerTest*")
     finalizedBy(tasks.jacocoTestReport)
 }
 
-tasks.register<Test>("integrationTest") {
+val integrationTest = tasks.register<Test>("integrationTest") {
     description = "Runs integration tests"
     group = "verification"
     testClassesDirs = sourceSets["test"].output.classesDirs
@@ -19,8 +20,19 @@ tasks.register<Test>("integrationTest") {
     finalizedBy(tasks.jacocoTestReport)
 }
 
+val containerTest = tasks.register<Test>("containerTest") {
+    description = "Runs container tests"
+    group = "verification"
+    testClassesDirs = sourceSets["test"].output.classesDirs
+    classpath = sourceSets["test"].runtimeClasspath
+    useJUnitPlatform()
+    include("**/*ContainerTest*")
+    shouldRunAfter(integrationTest)
+    finalizedBy(tasks.jacocoTestReport)
+}
+
 tasks.jacocoTestReport {
-    dependsOn(tasks.test, tasks.named("integrationTest"))
+    dependsOn(tasks.test, integrationTest, containerTest)
     reports {
         xml.required = true
         html.required = true
@@ -42,5 +54,5 @@ tasks.jacocoTestCoverageVerification {
 
 tasks.check {
     dependsOn(tasks.jacocoTestCoverageVerification)
-    dependsOn(tasks.named("integrationTest"))
+    dependsOn(integrationTest, containerTest)
 }
