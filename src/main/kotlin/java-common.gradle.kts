@@ -4,6 +4,7 @@ plugins {
     id("base-common")
     java
     `java-test-fixtures`
+    checkstyle
 }
 
 configurations {
@@ -36,15 +37,76 @@ tasks.withType<JavaCompile> {
 spotless {
     java {
         palantirJavaFormat("2.38.0")
-        importOrder("java", "javax", "org", "com", "")
+        importOrder("")
         removeUnusedImports()
         formatAnnotations()
         target("src/**/*.java")
     }
 }
 
-dependencies {
+checkstyle {
+    toolVersion = "10.12.7"
+    maxWarnings = 0
+    maxErrors = 0
+}
 
+// Load checkstyle config from classpath immediately
+val checkstyleConfigText = Thread.currentThread().contextClassLoader.getResourceAsStream("checkstyle.xml")?.bufferedReader()?.readText()
+val suppressionsText = Thread.currentThread().contextClassLoader.getResourceAsStream("checkstyle-suppressions.xml")?.bufferedReader()?.readText()
+
+if (checkstyleConfigText != null) {
+    // Configure checkstyle tasks to use files from classpath
+    tasks.withType<Checkstyle>().configureEach {
+        doFirst {
+            // Create config directory that matches Gradle's expected location
+            val configDir = file("${project.rootDir}/config/checkstyle")
+            configDir.mkdirs()
+            
+            // Write checkstyle.xml
+            val configFile = File(configDir, "checkstyle.xml")
+            configFile.writeText(checkstyleConfigText)
+            
+            // Also write suppressions file if it exists
+            if (suppressionsText != null) {
+                val suppressionsFile = File(configDir, "checkstyle-suppressions.xml")
+                suppressionsFile.writeText(suppressionsText)
+            }
+            
+            // Set the config file
+            (this as Checkstyle).configFile = configFile
+        }
+    }
+} else {
+    logger.warn("checkstyle.xml not found in classpath - checkstyle will not be configured")
+}
+
+// Handle checkstyle dependencies
+dependencies {
+    checkstyle("com.puppycrawl.tools:checkstyle:10.12.7") {
+        exclude(group = "com.google.collections", module = "google-collections")
+    }
+}
+
+// Force resolution of checkstyle configuration conflicts
+configurations.configureEach {
+    if (name == "checkstyle") {
+        resolutionStrategy {
+            force("org.codehaus.plexus:plexus-utils:3.3.0")
+            force("org.apache.commons:commons-lang3:3.8.1")
+            force("org.apache.httpcomponents:httpcore:4.4.14")
+            force("commons-codec:commons-codec:1.15")
+        }
+    }
+}
+
+tasks.withType<Checkstyle> {
+    reports {
+        xml.required.set(false)
+        html.required.set(true)
+    }
+}
+
+dependencies {
     compileOnly(resolve("libs.jetbrains.annotations"))
     testImplementation(resolve("libs.junit.jupiter.engine"))
     testRuntimeOnly(resolve("libs.junit.platform.launcher"))
