@@ -1,5 +1,6 @@
 plugins {
     base
+    id("com.diffplug.spotless")
 }
 
 group = "dev.iq.${rootProject.name}"
