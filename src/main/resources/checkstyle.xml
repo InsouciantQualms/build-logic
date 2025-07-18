@@ -78,9 +78,11 @@
             <property name="allowInSwitchCase" value="true"/>
         </module>
         <module name="AvoidStarImport"/> <!-- Java Style Guide: No wildcard imports -->
-        <module name="AvoidStaticImport"> <!-- Java Style Guide: No static imports -->
+        <!--
+        <module name="AvoidStaticImport">
             <property name="excludes" value="com.google.common.base.Preconditions.*, com.palantir.logsafe.Preconditions.*, java.util.Collections.*, java.util.stream.Collectors.*, org.apache.commons.lang3.Validate.*, org.assertj.core.api.Assertions.*, org.mockito.Mockito.*"/>
         </module>
+        -->
         <module name="ClassTypeParameterName"> <!-- Java Style Guide: Type variable names -->
             <property name="format" value="(^[A-Z][0-9]?)$|([A-Z][a-zA-Z0-9]*[T]$)"/>
             <message key="name.invalidPattern" value="Class type name ''{0}'' must match pattern ''{1}''."/>
@@ -452,7 +454,7 @@
         <module name="NestedTryDepth"/> <!-- Java Coding Guide: Try/catch blocks: never nested -->
         <module name="NonEmptyAtclauseDescription"/> <!-- Java Style Guide: At-clauses -->
         <module name="ParameterName"> <!-- Java Style Guide: Parameter names -->
-            <property name="format" value="^_?[a-z][a-zA-Z0-9]+$"/>
+            <property name="format" value="^_?[a-z][a-zA-Z0-9]*$"/>
             <message key="name.invalidPattern" value="Parameter name ''{0}'' must match pattern ''{1}''."/>
         </module>
         <module name="SummaryJavadocCheck"> <!-- Java Coding Guidelines: Javadoc -->

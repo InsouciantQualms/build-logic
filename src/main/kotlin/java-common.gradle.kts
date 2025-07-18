@@ -47,41 +47,27 @@ tasks.withType<JavaCompile> {
 
 spotless {
     java {
-        palantirJavaFormat("2.38.0")
+        palantirJavaFormat("2.50.0")
         importOrder("")
         removeUnusedImports()
         formatAnnotations()
         target("src/**/*.java")
+        targetExclude("**/build/**")
     }
 }
 
 checkstyle {
-    toolVersion = "10.12.7"
-    maxWarnings = 0
-    maxErrors = 0
-
     val resourceUrl = Thread.currentThread().contextClassLoader.getResource("checkstyle.xml")
-    config = resources.text.fromUri(resourceUrl!!)
-}
-
-// Handle checkstyle dependencies
-dependencies {
-    checkstyle("com.puppycrawl.tools:checkstyle:10.12.7") {
-        exclude(group = "com.google.collections", module = "google-collections")
-    }
-}
-
-// Force resolution of checkstyle configuration conflicts
-
-tasks.withType<Checkstyle> {
-    reports {
-        xml.required.set(false)
-        html.required.set(true)
-    }
+        ?: throw GradleException("Failed to load checkstyle configuration file!")
+    config = resources.text.fromUri(resourceUrl)
+    toolVersion = resolve("libs.versions.checkstyle")
+    maxWarnings = 999
+    maxErrors = 999
 }
 
 dependencies {
     compileOnly(resolve("libs.jetbrains.annotations"))
     testImplementation(resolve("libs.junit.jupiter.engine"))
     testRuntimeOnly(resolve("libs.junit.platform.launcher"))
+    checkstyle(resolve("libs.checkstyle"))
 }
