@@ -2,7 +2,7 @@
   "$schema": "https://raw.githubusercontent.com/devcontainers/spec/main/schema/devcontainer.json",
   "name": "Claude Code Dev Sandbox",
   "version": "2.0.0",
-  "dockerComposeFile": ["docker-compose.yml"],
+  "dockerComposeFile": ["../docker-compose-intellij.yml"],
   "service": "claude-code-dev",
   "workspaceMount": "source=${localWorkspaceFolder},target=/workspace,type=bind,consistency=delegated",
   "workspaceFolder": "/workspace",

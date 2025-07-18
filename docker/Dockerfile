@@ -2,8 +2,7 @@ FROM claude-code
 
 USER root
 
-# Create dirs for IntelliJ remote IDE to persist settings across builds (mounted from host)
-
+# Create dirs for IntelliJ remote IDE to persist settings across builds (mounted from host).
 RUN \
   mkdir -p /home/node/.cache/JetBrains/RemoteDev/dist/idea-IU-251.26094.121 && \
   mkdir -p /.jbdevcontainer/JetBrains/IntelliJIdea2025.1/plugins && \

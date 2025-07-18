@@ -1,0 +1,33 @@
+name: claude-code-cli
+services:
+  claude-code-cli:
+    container_name: "claude-code-cli"
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      NODE_OPTIONS: "--max-old-space-size=4096"
+      POWERLEVEL9K_DISABLE_GITSTATUS: "true"
+    cap_add:
+      - NET_ADMIN
+      - NET_RAW
+    entrypoint: ["/usr/local/bin/entrypoint.sh"]
+    # command: [ "claude", "code" ]
+    command: [ "tail", "-f", "/dev/null" ]
+    stdin_open: true
+    tty: true
+    volumes:
+      # Claude configuration and credentials
+      - ~/.claude.json:/home/node/.claude.json:delegated
+      - ~/.claude:/home/node/.claude:delegated
+
+      # SSH keys for Git operations
+      - ~/.ssh:/home/node/.ssh:ro
+
+      # Gradle cache to speed up builds
+      - ~/.gradle:/home/node/.gradle:delegated
+
+      # Primary workspace mount - uses environment variable
+      - ~/Dev/build-logic:/workspace/build-logic
+      - ~/Dev/common:/workspace/common
+      - ${CLAUDE_WORKSPACE:-$PWD}:/workspace/${CLAUDE_DIRNAME}
