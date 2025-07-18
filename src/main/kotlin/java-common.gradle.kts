@@ -56,6 +56,11 @@ spotless {
     }
 }
 
+// Make spotlessCheck depend on spotlessApply so formatting is automatically applied
+tasks.named("spotlessCheck") {
+    dependsOn("spotlessApply")
+}
+
 checkstyle {
     val resourceUrl = Thread.currentThread().contextClassLoader.getResource("checkstyle.xml")
         ?: throw GradleException("Failed to load checkstyle configuration file!")
