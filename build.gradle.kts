@@ -2,6 +2,7 @@ plugins {
     `kotlin-dsl`
 }
 
+/*
 sourceSets {
     main {
         kotlin {
@@ -9,6 +10,7 @@ sourceSets {
         }
     }
 }
+*/
 
 dependencies {
 
