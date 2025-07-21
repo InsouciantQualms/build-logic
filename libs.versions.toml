@@ -19,7 +19,9 @@ testcontainers = "1.19.8"
 # Aliased build plugins
 kotlin-gradle-plugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
 plantuml-gradle-plugin = { module = "io.gitlab.plunts.plantuml:io.gitlab.plunts.plantuml.gradle.plugin", version = "2.3.0" }
+shadow-plugin = { module = "com.github.johnrengelman:shadow", version = "8.1.1" }
 spotless-plugin = { module = "com.diffplug.spotless:spotless-plugin-gradle", version = "6.23.3" }
+gradle-versions-plugin = { module = "com.github.ben-manes.versions:com.github.ben-manes.versions.gradle.plugin", version = "0.52.0" }
 
 # API or standard Java dependencies
 jakarta-inject = { module = "jakarta.inject:jakarta.inject-api", version = "2.0.1" }

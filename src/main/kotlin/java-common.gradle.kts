@@ -56,7 +56,6 @@ spotless {
     }
 }
 
-// Make spotlessCheck depend on spotlessApply so formatting is automatically applied
 tasks.named("spotlessCheck") {
     dependsOn("spotlessApply")
 }

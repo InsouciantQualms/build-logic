@@ -1,5 +1,6 @@
 plugins {
     base
+    id("com.github.ben-manes.versions")
     id("com.diffplug.spotless")
 }
 

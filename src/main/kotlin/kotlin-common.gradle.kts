@@ -19,9 +19,10 @@ kotlin {
     jvmToolchain(resolve("libs.versions.jdk").toInt())
 }
 
+val editorConfig = File(System.getProperty("user.home"), ".editorconfig")
 spotless {
     kotlin {
-        ktlint("1.3.1") // .setEditorConfigPath("$rootDir/.editorconfig")
+        ktlint("1.3.1").setEditorConfigPath(editorConfig)
         target("src/**/*.kt")
         targetExclude("**/build/**")
     }

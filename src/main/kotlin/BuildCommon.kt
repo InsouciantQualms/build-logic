@@ -13,6 +13,7 @@ import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.OutputFile
 import org.gradle.api.tasks.TaskAction
 import org.gradle.kotlin.dsl.getByType
+import org.gradle.kotlin.dsl.named
 import java.io.File
 import java.net.URI
 
