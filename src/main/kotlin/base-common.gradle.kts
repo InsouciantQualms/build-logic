@@ -8,7 +8,6 @@ group = "dev.iq.${rootProject.name}"
 configurations.all {
     resolutionStrategy {
         preferProjectModules()
-        failOnVersionConflict()
     }
 }
 
