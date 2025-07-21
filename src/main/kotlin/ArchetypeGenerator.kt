@@ -45,7 +45,6 @@ class ArchetypeGenerator {
         generateGradleWrapper(projectPath)
         generateGitignore(projectPath)
         
-        val modulePath = projectPath.resolve("app")
         generateModule(config.copy(
             projectType = ProjectType.MODULE,
             targetPath = projectPath,
@@ -309,7 +308,7 @@ class ArchetypeGenerator {
     private fun toClassName(projectName: String): String {
         return projectName.split(Regex("[^a-zA-Z0-9]"))
             .filter { it.isNotEmpty() }
-            .joinToString("") { it.capitalize() }
+            .joinToString("") { it.replaceFirstChar { char -> char.uppercase() } }
     }
     
     private fun getGradlewScript(): String = """

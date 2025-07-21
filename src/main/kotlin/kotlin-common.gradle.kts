@@ -28,6 +28,10 @@ spotless {
     }
 }
 
+tasks.named("spotlessCheck") {
+    dependsOn("spotlessApply")
+}
+
 dependencies {
 
     implementation(platform(resolve("libs.kotlin.bom")))
