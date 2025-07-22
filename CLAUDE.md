@@ -7,11 +7,11 @@
 
 # Current Instructions
 
-* Please take a look at ~/Dev/build-logic/sample as an inspiration for the changes below:
-* I do not like the approach of so much logic and magic happening in the gradle plugin or kotlin ArchetypeGenerator.kt
-* Rather, the actual gradle integration itself should be minimal (and only one archetype.gradle.kts)
-* I want to be able to easily edit the templates and "see" what each archetype will produce
-* The same directory only has one structure (for modules), so this needs to be modified to handle modules and projects
+* Please give the archetype generator solution a thorough review
+* Note that the settings.gradle.kts might not be in the immediate parent directory, as modules can nest.  
+* Similarly build-logic might not be in a sibling directory.  You should keep scanning up until you find build-logic listed.
+* The template's settings.gradle.kts needs to include the proper relative directory for build-logic as an includedBuild
+* If there are any additional files to delete, please let me know
 
 # Constraints
 

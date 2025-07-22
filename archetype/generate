@@ -1,0 +1,292 @@
+#!/bin/bash
+
+# Gradle Archetype Generator - Simplified Bash Implementation
+# Usage: ./generate [create-project|create-module] <name> [java|kotlin] [packageName]
+
+set -e
+
+# Get the directory where this script is located
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+ARCHETYPE_ROOT="$SCRIPT_DIR"
+
+# Function to show usage
+show_usage() {
+    echo "Archetype Generator"
+    echo ""
+    echo "Usage:"
+    echo "  $0 create-project <projectName>"
+    echo "  $0 create-module <moduleName> [java|kotlin] [packageName]"
+    echo ""
+    echo "Examples:"
+    echo "  $0 create-project my-app"
+    echo "  $0 create-module api java com.example.api"
+}
+
+# Function to derive package name from project name
+derive_package_name() {
+    local name="$1"
+    # Convert to lowercase, replace non-alphanumeric with dots, clean up multiple dots
+    echo "$name" | tr '[:upper:]' '[:lower:]' | sed 's/[^a-z0-9]/./g' | sed 's/\.\.*/./g' | sed 's/^\.//;s/\.$//' | sed 's/^/com.example./'
+}
+
+# Function to convert name to ClassName format
+to_class_name() {
+    local name="$1"
+    # Split on non-alphanumeric, capitalize each word, join together
+    echo "$name" | sed 's/[^a-zA-Z0-9]/ /g' | awk '{for(i=1;i<=NF;i++) $i=toupper(substr($i,1,1)) substr($i,2)} 1' | sed 's/ //g'
+}
+
+# Function to copy and process template files
+copy_template() {
+    local source_dir="$1"
+    local target_dir="$2"
+    local project_name="$3"
+    local package_name="${4:-}"
+    local class_name="${5:-}"
+    
+    if [ ! -d "$source_dir" ]; then
+        echo "Error: Template not found: $source_dir"
+        exit 1
+    fi
+    
+    if [ -d "$target_dir" ]; then
+        echo "Error: Target already exists: $target_dir"
+        exit 1
+    fi
+    
+    # Convert package name to path if provided
+    local package_path=""
+    if [ -n "$package_name" ]; then
+        package_path=$(echo "$package_name" | tr '.' '/')
+    fi
+    
+    echo "Creating from template: $source_dir -> $target_dir"
+    
+    # Use find to copy all files and directories
+    find "$source_dir" -type d | while read dir; do
+        local rel_path="${dir#$source_dir/}"
+        if [ "$rel_path" != "$dir" ]; then
+            local target_path="$target_dir/$rel_path"
+            # Replace placeholders in directory path
+            if [ -n "$package_path" ]; then
+                target_path=$(echo "$target_path" | sed "s|{{packagePath}}|$package_path|g")
+            fi
+            if [ -n "$class_name" ]; then
+                target_path=$(echo "$target_path" | sed "s|{{className}}|$class_name|g")
+            fi
+            target_path=$(echo "$target_path" | sed "s|{{projectName}}|$project_name|g")
+            mkdir -p "$target_path"
+        fi
+    done
+    
+    find "$source_dir" -type f | while read file; do
+        local rel_path="${file#$source_dir/}"
+        local target_file="$target_dir/$rel_path"
+        
+        # Replace placeholders in file path
+        if [ -n "$package_path" ]; then
+            target_file=$(echo "$target_file" | sed "s|{{packagePath}}|$package_path|g")
+        fi
+        if [ -n "$class_name" ]; then
+            target_file=$(echo "$target_file" | sed "s|{{className}}|$class_name|g")
+        fi
+        target_file=$(echo "$target_file" | sed "s|{{projectName}}|$project_name|g")
+        
+        # Ensure target directory exists
+        mkdir -p "$(dirname "$target_file")"
+        
+        # Check if it's a binary file (basic check)
+        if file "$file" | grep -q "text\|ASCII\|empty"; then
+            # Text file - process replacements
+            local sed_cmd="s|{{projectName}}|$project_name|g"
+            if [ -n "$package_name" ]; then
+                sed_cmd="$sed_cmd; s|{{packageName}}|$package_name|g"
+            fi
+            if [ -n "$package_path" ]; then
+                sed_cmd="$sed_cmd; s|{{packagePath}}|$package_path|g"
+            fi
+            if [ -n "$class_name" ]; then
+                sed_cmd="$sed_cmd; s|{{className}}|$class_name|g"
+            fi
+            sed "$sed_cmd" "$file" > "$target_file"
+        else
+            # Binary file - copy as-is
+            cp "$file" "$target_file"
+        fi
+    done
+}
+
+# Function to find build-logic directory by scanning upward
+find_build_logic() {
+    local current_dir="$(pwd)"
+    local search_dir="$current_dir"
+    
+    while [ "$search_dir" != "/" ]; do
+        if [ -d "$search_dir/build-logic" ]; then
+            echo "$search_dir/build-logic"
+            return 0
+        fi
+        search_dir="$(dirname "$search_dir")"
+    done
+    
+    echo "Error: Could not find build-logic directory" >&2
+    return 1
+}
+
+# Function to calculate relative path from source to target
+calculate_relative_path() {
+    local source="$1"
+    local target="$2"
+    
+    # Convert to absolute paths
+    source=$(cd "$source" && pwd)
+    target=$(cd "$target" && pwd)
+    
+    # Calculate relative path
+    python3 -c "import os.path; print(os.path.relpath('$target', '$source'))" 2>/dev/null || \
+    perl -e "use File::Spec; print File::Spec->abs2rel('$target', '$source')" 2>/dev/null || \
+    {
+        # Fallback: simple case for common scenarios
+        if [ "$(dirname "$source")" = "$(dirname "$target")" ]; then
+            echo "$(basename "$target")"
+        else
+            echo "../$(basename "$target")"
+        fi
+    }
+}
+
+# Function to find parent settings.gradle.kts by scanning upward
+find_parent_settings() {
+    local current_dir="$(pwd)"
+    local search_dir="$current_dir"
+    
+    # First check current directory
+    if [ -f "$current_dir/settings.gradle.kts" ]; then
+        echo "$current_dir/settings.gradle.kts"
+        return 0
+    fi
+    
+    # Then scan upward
+    search_dir="$(dirname "$current_dir")"
+    while [ "$search_dir" != "/" ]; do
+        if [ -f "$search_dir/settings.gradle.kts" ]; then
+            echo "$search_dir/settings.gradle.kts"
+            return 0
+        fi
+        search_dir="$(dirname "$search_dir")"
+    done
+    
+    return 1
+}
+
+# Function to update parent settings.gradle.kts when creating a module
+update_parent_settings() {
+    local module_name="$1"
+    local current_dir="$(pwd)"
+    
+    # Find the parent settings.gradle.kts file
+    local settings_file
+    if settings_file=$(find_parent_settings); then
+        local settings_dir="$(dirname "$settings_file")"
+        
+        # Calculate the relative module path from settings directory
+        local relative_module_path
+        relative_module_path=$(calculate_relative_path "$settings_dir" "$current_dir/$module_name")
+        
+        # Use colon notation for module path
+        local module_path=":${relative_module_path//\//:}"
+        
+        if ! grep -q "include(\"$module_path\")" "$settings_file"; then
+            echo "" >> "$settings_file"
+            echo "include(\"$module_path\")" >> "$settings_file"
+            echo "Updated $(basename "$settings_file") to include module: $module_path"
+        else
+            echo "Module $module_path already included in settings"
+        fi
+    else
+        echo "Warning: Could not find settings.gradle.kts file in current or parent directories"
+        echo "You may need to manually add: include(\":$module_name\") to your settings file"
+    fi
+}
+
+# Main script logic
+case "${1:-}" in
+    "create-project")
+        if [ $# -lt 2 ]; then
+            echo "Error: Project name is required"
+            show_usage
+            exit 1
+        fi
+        
+        PROJECT_NAME="$2"
+        TEMPLATE_DIR="$ARCHETYPE_ROOT/project"
+        TARGET_DIR="$PROJECT_NAME"
+        
+        # Find build-logic directory
+        BUILD_LOGIC_DIR=$(find_build_logic)
+        if [ $? -eq 0 ]; then
+            echo "Found build-logic at: $BUILD_LOGIC_DIR"
+            
+            # Calculate relative path from project to build-logic
+            RELATIVE_BUILD_LOGIC=$(calculate_relative_path "$(pwd)/$TARGET_DIR" "$BUILD_LOGIC_DIR")
+            
+            # Copy template files
+            copy_template "$TEMPLATE_DIR" "$TARGET_DIR" "$PROJECT_NAME"
+            
+            # Update the settings.gradle.kts with correct build-logic path
+            SETTINGS_FILE="$TARGET_DIR/settings.gradle.kts"
+            if [ -f "$SETTINGS_FILE" ]; then
+                # Replace both includeBuild and version catalog paths
+                sed -i.bak \
+                    -e "s|../build-logic|$RELATIVE_BUILD_LOGIC|g" \
+                    "$SETTINGS_FILE"
+                rm -f "$SETTINGS_FILE.bak"
+                echo "Updated settings.gradle.kts to use build-logic at: $RELATIVE_BUILD_LOGIC"
+            fi
+            
+            echo "Successfully created project: $PROJECT_NAME"
+            echo "Build-logic reference: $RELATIVE_BUILD_LOGIC"
+            echo "Next steps:"
+            echo "  cd $PROJECT_NAME"
+            echo "  # Create your first module with:"
+            ARCHETYPE_PATH=$(calculate_relative_path "$(pwd)/$TARGET_DIR" "$ARCHETYPE_ROOT")
+            echo "  $ARCHETYPE_PATH/generate create-module app java"
+        else
+            echo "Error: Could not find build-logic directory"
+            exit 1
+        fi
+        ;;
+        
+    "create-module")
+        if [ $# -lt 2 ]; then
+            echo "Error: Module name is required"
+            show_usage
+            exit 1
+        fi
+        
+        MODULE_NAME="$2"
+        LANGUAGE="${3:-java}"
+        PACKAGE_NAME="${4:-$(derive_package_name "$MODULE_NAME")}"
+        
+        if [[ "$LANGUAGE" != "java" && "$LANGUAGE" != "kotlin" ]]; then
+            echo "Error: Language must be 'java' or 'kotlin'"
+            exit 1
+        fi
+        
+        TEMPLATE_DIR="$ARCHETYPE_ROOT/module/$LANGUAGE"
+        TARGET_DIR="$MODULE_NAME"
+        CLASS_NAME=$(to_class_name "$MODULE_NAME")
+        
+        copy_template "$TEMPLATE_DIR" "$TARGET_DIR" "$MODULE_NAME" "$PACKAGE_NAME" "$CLASS_NAME"
+        update_parent_settings "$MODULE_NAME"
+        
+        echo "Successfully created $LANGUAGE module: $MODULE_NAME"
+        echo "Package: $PACKAGE_NAME"
+        echo "Main class: $CLASS_NAME"
+        ;;
+        
+    *)
+        show_usage
+        exit 1
+        ;;
+esac
