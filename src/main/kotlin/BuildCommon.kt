@@ -13,7 +13,6 @@ import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.OutputFile
 import org.gradle.api.tasks.TaskAction
 import org.gradle.kotlin.dsl.getByType
-import org.gradle.kotlin.dsl.named
 import java.io.File
 import java.net.URI
 
@@ -48,6 +47,22 @@ fun Project.download(uri: URI, dest: File) {
         dest.outputStream().use { output ->
             output.write(input.readBytes())
         }
+    }
+    logger.lifecycle(" done! (${String.format("%,d", dest.length())} bytes).")
+}
+
+/**
+ * Copy a resource on the classpath to a destination file.
+ */
+fun Project.copyFromClasspath(resourcePath: String, dest: File) {
+    logger.lifecycle("Copying classpath resource '$resourcePath' to ${dest.absolutePath} ... ")
+    dest.parentFile?.mkdirs()
+    val resourceStream = Thread.currentThread().contextClassLoader.getResourceAsStream(resourcePath)
+        ?: javaClass.classLoader.getResourceAsStream(resourcePath)
+        ?: ClassLoader.getSystemResourceAsStream(resourcePath)
+        ?: throw IllegalArgumentException("Resource not found on classpath: $resourcePath")
+    resourceStream.use { input ->
+        dest.outputStream().use { output -> output.write(input.readBytes()) }
     }
     logger.lifecycle(" done! (${String.format("%,d", dest.length())} bytes).")
 }
