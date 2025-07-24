@@ -7,11 +7,7 @@
 
 # Current Instructions
 
-* Please give the archetype generator solution a thorough review
-* Note that the settings.gradle.kts might not be in the immediate parent directory, as modules can nest.  
-* Similarly build-logic might not be in a sibling directory.  You should keep scanning up until you find build-logic listed.
-* The template's settings.gradle.kts needs to include the proper relative directory for build-logic as an includedBuild
-* If there are any additional files to delete, please let me know
+
 
 # Constraints
 
