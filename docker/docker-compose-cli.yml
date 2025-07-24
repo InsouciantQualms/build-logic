@@ -29,5 +29,6 @@ services:
 
       # Primary workspace mount - uses environment variable
       - ~/Dev/build-logic:/workspace/build-logic
+      - ~/Dev/build-logic:/workspace/ai
       - ~/Dev/common:/workspace/common
       - ${CLAUDE_WORKSPACE:-$PWD}:/workspace/${CLAUDE_DIRNAME}
