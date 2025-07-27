@@ -69,6 +69,10 @@ checkstyle {
     maxErrors = 999
 }
 
+tasks.withType<Checkstyle> {
+    dependsOn("spotlessCheck")
+}
+
 dependencies {
     compileOnly(resolve("libs.jetbrains.annotations"))
     testImplementation(resolve("libs.junit.jupiter.engine"))
