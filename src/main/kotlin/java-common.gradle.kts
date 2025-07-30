@@ -65,8 +65,8 @@ checkstyle {
         ?: throw GradleException("Failed to load checkstyle configuration file!")
     config = resources.text.fromUri(resourceUrl)
     toolVersion = resolve("libs.versions.checkstyle")
-    maxWarnings = 999
-    maxErrors = 999
+    maxWarnings = 0
+    maxErrors = 0
 }
 
 tasks.withType<Checkstyle> {
