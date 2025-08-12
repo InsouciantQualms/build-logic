@@ -69,6 +69,7 @@ ical4j = { module = "org.mnode.ical4j:ical4j", version = "4.0.2" }
 jetbrains-annotations = { module = "org.jetbrains:annotations", version = "26.0.2" }
 jnanoid = { module = "com.aventrix.jnanoid:jnanoid", version = "2.0.0" }
 slf4j-api = { module = "org.slf4j:slf4j-api", version = "2.0.17" }
+ulid = { module = "com.github.f4b6a3:ulid-creator", version = "5.2.3" }
 vavr = { module = "io.vavr:vavr", version = "0.10.6" }
 yaml = { module = "org.yaml:snakeyaml", version = "2.2" }
 
