@@ -6,6 +6,7 @@
 
 # Ignore local Claude settings
 **/.claude/
+/prompts/current.md
 
 # Ignore build Gradle cache
 **/.gradle/
