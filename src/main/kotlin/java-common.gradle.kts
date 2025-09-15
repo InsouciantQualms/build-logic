@@ -7,33 +7,6 @@ plugins {
     checkstyle
 }
 
-configurations {
-    all {
-        resolutionStrategy {
-            force(resolve("libs.slf4j.api"))
-            force(resolve("libs.jetbrains.annotations"))
-            force(resolve("libs.jackson.annotations"))
-            force(resolve("libs.jackson.core"))
-            force(resolve("libs.jackson.databind"))
-            force(resolve("libs.jackson.guava"))
-            force(resolve("libs.jackson.jdk8"))
-            force(resolve("libs.jackson.parameters"))
-            force("com.google.guava:guava:32.1.2-jre")
-        }
-    }
-}
-
-configurations.configureEach {
-    checkstyle {
-        resolutionStrategy {
-            force("org.codehaus.plexus:plexus-utils:3.3.0")
-            force("org.apache.commons:commons-lang3:3.8.1")
-            force("org.apache.httpcomponents:httpcore:4.4.14")
-            force("commons-codec:commons-codec:1.15")
-        }
-    }
-}
-
 java {
     toolchain {
         languageVersion.set(JavaLanguageVersion.of(resolve("libs.versions.jdk")))

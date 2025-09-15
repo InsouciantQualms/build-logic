@@ -1,18 +1,6 @@
 plugins {
-    id("base-common")
+    id("java-common")
     kotlin("jvm")
-}
-
-configurations.all {
-    resolutionStrategy {
-        force(resolve("libs.kotlin.stdlib"))
-        force(resolve("libs.kotlin.stdlib.common"))
-        force(resolve("libs.kotlin.stdlib.jdk8"))
-        force(resolve("libs.kotlin.stdlib.jdk7"))
-        force(resolve("libs.kotlin.reflect"))
-        force(resolve("libs.jetbrains.annotations"))
-        force(resolve("libs.opentest4j"))
-    }
 }
 
 kotlin {

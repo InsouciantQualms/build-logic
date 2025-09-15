@@ -21,6 +21,7 @@ import java.net.URI
  */
 @Suppress("unused")
 abstract class Download : DefaultTask() {
+
     /** URI to download. */
     @get:Input
     abstract val uri: Property<String>
@@ -42,20 +43,20 @@ abstract class Download : DefaultTask() {
  * Helper function to download a file to the specified location.
  */
 fun Project.download(uri: URI, dest: File) {
-    logger.lifecycle("Downloading $uri ... ")
+    logger.info("Downloading $uri ... ")
     uri.toURL().openStream().use { input ->
         dest.outputStream().use { output ->
             output.write(input.readBytes())
         }
     }
-    logger.lifecycle(" done! (${String.format("%,d", dest.length())} bytes).")
+    logger.info(" done! (${String.format("%,d", dest.length())} bytes).")
 }
 
 /**
  * Copy a resource on the classpath to a destination file.
  */
 fun Project.copyFromClasspath(resourcePath: String, dest: File) {
-    logger.lifecycle("Copying classpath resource '$resourcePath' to ${dest.absolutePath} ... ")
+    logger.info("Copying classpath resource '$resourcePath' to ${dest.absolutePath} ... ")
     dest.parentFile?.mkdirs()
     val resourceStream = Thread.currentThread().contextClassLoader.getResourceAsStream(resourcePath)
         ?: javaClass.classLoader.getResourceAsStream(resourcePath)
@@ -64,7 +65,7 @@ fun Project.copyFromClasspath(resourcePath: String, dest: File) {
     resourceStream.use { input ->
         dest.outputStream().use { output -> output.write(input.readBytes()) }
     }
-    logger.lifecycle(" done! (${String.format("%,d", dest.length())} bytes).")
+    logger.info(" done! (${String.format("%,d", dest.length())} bytes).")
 }
 
 /**
