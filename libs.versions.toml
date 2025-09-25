@@ -80,7 +80,7 @@ junit-platform-launcher = { module = "org.junit.platform:junit-platform-launcher
 kotlin-test-junit5 = { module = "org.jetbrains.kotlin:kotlin-test-junit5" }
 
 # ArchUnit
-archunit = { module = "com.tngtech.archunit:archunit", version = "1.2.0" }
+archunit = { module = "com.tngtech.archunit:archunit", version = "1.4.1" }
 
 # Kotest
 kotest-assertions-core = { module = "io.kotest:kotest-assertions-core", version.ref = "kotest" }
