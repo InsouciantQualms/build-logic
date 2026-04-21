@@ -4,15 +4,24 @@
 [versions]
 
 checkstyle = "10.26.1"
+clikt = "5.0.1"
+commonmark = "0.23.0"
+detekt = "1.23.7"
 jdk = "21"
 gremlin = "3.7.3"
+java-diff-utils = "4.12"
+kaml = "0.72.0"
+konsist = "0.17.3"
 kotest = "5.9.1"
 kotlin = "2.2.0"
 ktor = "3.1.2"
 jackson = "2.19.1"
 junit = "5.10.1"
 log4j = "2.20.0"
+resilience4j = "2.2.0"
+sqldelight = "2.0.2"
 testcontainers = "1.19.8"
+thymeleaf = "3.1.2.RELEASE"
 
 [libraries]
 
@@ -99,6 +108,40 @@ testcontainers-bom = { module = "org.testcontainers:testcontainers-bom", version
 testcontainers-junit-jupiter = { module = "org.testcontainers:junit-jupiter", version.ref = "testcontainers" }
 testcontainers = { module = "org.testcontainers:testcontainers", version.ref = "testcontainers" }
 
+# Resilience (rate limit, retry, circuit breaker for LlmProvider adapter)
+resilience4j-core = { module = "io.github.resilience4j:resilience4j-core", version.ref = "resilience4j" }
+resilience4j-kotlin = { module = "io.github.resilience4j:resilience4j-kotlin", version.ref = "resilience4j" }
+resilience4j-ratelimiter = { module = "io.github.resilience4j:resilience4j-ratelimiter", version.ref = "resilience4j" }
+resilience4j-retry = { module = "io.github.resilience4j:resilience4j-retry", version.ref = "resilience4j" }
+resilience4j-circuitbreaker = { module = "io.github.resilience4j:resilience4j-circuitbreaker", version.ref = "resilience4j" }
+
+# SQLDelight (compile-time-checked SQL for SQLite persistence)
+sqldelight-runtime = { module = "app.cash.sqldelight:runtime", version.ref = "sqldelight" }
+sqldelight-sqlite-driver = { module = "app.cash.sqldelight:sqlite-driver", version.ref = "sqldelight" }
+sqldelight-coroutines-extensions = { module = "app.cash.sqldelight:coroutines-extensions", version.ref = "sqldelight" }
+sqldelight-gradle-plugin = { module = "app.cash.sqldelight:gradle-plugin", version.ref = "sqldelight" }
+
+# Konsist (Kotlin-idiom architecture tests, complements ArchUnit)
+konsist = { module = "com.lemonappdev:konsist", version.ref = "konsist" }
+
+# Detekt (Kotlin static analysis)
+detekt-gradle-plugin = { module = "io.gitlab.arturbosch.detekt:detekt-gradle-plugin", version.ref = "detekt" }
+
+# Diff utilities (structured diffs for FeedbackFormatter)
+java-diff-utils = { module = "io.github.java-diff-utils:java-diff-utils", version.ref = "java-diff-utils" }
+
+# Templating (InstructionRenderer + HTMX responses)
+thymeleaf = { module = "org.thymeleaf:thymeleaf", version.ref = "thymeleaf" }
+
+# Markdown (HTMX UI rendering of findings and artifacts)
+commonmark = { module = "org.commonmark:commonmark", version.ref = "commonmark" }
+
+# CLI (Phase 1 replacement for PicoCLI)
+clikt = { module = "com.github.ajalt.clikt:clikt", version.ref = "clikt" }
+
+# Type-safe YAML (config layering)
+kaml = { module = "com.charleskorn.kaml:kaml", version.ref = "kaml" }
+
 [bundles]
 
 jackson = ["jackson-annotations", "jackson-databind", "jackson-jsr310", "jackson-jdk8", "jackson-parameters", "jackson-properties"]
@@ -107,3 +150,5 @@ kotlin = ["kotlin-stdlib", "kotlinx-collections-immutable", "kotlinx-serializati
 [plugins]
 
 ktor = { id = "io.ktor.plugin", version.ref = "ktor" }
+detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
+sqldelight = { id = "app.cash.sqldelight", version.ref = "sqldelight" }

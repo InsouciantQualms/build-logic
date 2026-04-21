@@ -1,10 +1,14 @@
 plugins {
     id("java-common")
     kotlin("jvm")
+    id("io.gitlab.arturbosch.detekt")
 }
 
 kotlin {
     jvmToolchain(resolve("libs.versions.jdk").toInt())
+    compilerOptions {
+        freeCompilerArgs.add("-Xcontext-parameters")
+    }
 }
 
 val editorConfigFile = layout.buildDirectory.file("resources/.editorconfig").get().asFile
@@ -20,6 +24,17 @@ spotless {
 
 tasks.named("spotlessCheck") {
     dependsOn("spotlessApply")
+}
+
+detekt {
+    buildUponDefaultConfig = true
+    allRules = false
+    ignoreFailures = true
+    config.setFrom(rootProject.files("detekt.yml"))
+}
+
+tasks.named("check") {
+    dependsOn("detekt")
 }
 
 dependencies {
