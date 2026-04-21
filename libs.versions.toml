@@ -111,6 +111,7 @@ testcontainers-junit-jupiter = { module = "org.testcontainers:junit-jupiter", ve
 testcontainers = { module = "org.testcontainers:testcontainers", version.ref = "testcontainers" }
 
 # Resilience (rate limit, retry, circuit breaker for LlmProvider adapter)
+resilience4j-all = { module = "io.github.resilience4j:resilience4j-all", version.ref = "resilience4j" }
 resilience4j-core = { module = "io.github.resilience4j:resilience4j-core", version.ref = "resilience4j" }
 resilience4j-kotlin = { module = "io.github.resilience4j:resilience4j-kotlin", version.ref = "resilience4j" }
 resilience4j-ratelimiter = { module = "io.github.resilience4j:resilience4j-ratelimiter", version.ref = "resilience4j" }

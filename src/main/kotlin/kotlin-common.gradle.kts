@@ -27,13 +27,14 @@ tasks.named("spotlessCheck") {
 }
 
 detekt {
+    toolVersion = resolve("libs.versions.detekt")
     buildUponDefaultConfig = true
     allRules = false
-    ignoreFailures = true
-    config.setFrom(rootProject.files("detekt.yml"))
+    source.setFrom(files("src/main/kotlin", "src/test/kotlin", "src/testFixtures/kotlin"))
+    rootProject.file("detekt.yml").takeIf { it.exists() }?.let { config.setFrom(files(it)) }
 }
 
-tasks.named("check") {
+tasks.check {
     dependsOn("detekt")
 }
 
@@ -50,4 +51,5 @@ dependencies {
     testImplementation(resolve("libs.kotest.runner.junit5"))
     testImplementation(resolve("libs.kotest.assertions.core"))
     testImplementation(resolve("libs.kotest.property"))
+    testImplementation(resolve("libs.konsist"))
 }

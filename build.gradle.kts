@@ -10,4 +10,5 @@ dependencies {
     implementation(libs.shadow.plugin)
     implementation(libs.gradle.versions.plugin)
     implementation(libs.detekt.gradle.plugin)
+    implementation(libs.sqldelight.gradle.plugin)
 }
