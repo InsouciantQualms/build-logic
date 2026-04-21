@@ -10,10 +10,12 @@ detekt = "1.23.7"
 jdk = "21"
 gremlin = "3.7.3"
 java-diff-utils = "4.12"
+jgit = "7.2.0.202503040940-r"
 kaml = "0.72.0"
 konsist = "0.17.3"
 kotest = "5.9.1"
 kotlin = "2.2.0"
+kotlin-logging = "7.0.0"
 ktor = "3.1.2"
 jackson = "2.19.1"
 junit = "5.10.1"
@@ -129,6 +131,12 @@ detekt-gradle-plugin = { module = "io.gitlab.arturbosch.detekt:detekt-gradle-plu
 
 # Diff utilities (structured diffs for FeedbackFormatter)
 java-diff-utils = { module = "io.github.java-diff-utils:java-diff-utils", version.ref = "java-diff-utils" }
+
+# JGit (programmatic git worktree management for WorktreeWorkspace)
+jgit = { module = "org.eclipse.jgit:org.eclipse.jgit", version.ref = "jgit" }
+
+# Structured logging (kotlin-logging facade over slf4j)
+kotlin-logging = { module = "io.github.oshai:kotlin-logging-jvm", version.ref = "kotlin-logging" }
 
 # Templating (InstructionRenderer + HTMX responses)
 thymeleaf = { module = "org.thymeleaf:thymeleaf", version.ref = "thymeleaf" }
