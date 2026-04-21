@@ -1,6 +1,7 @@
 plugins {
     id("java-common")
     kotlin("jvm")
+    id("io.gitlab.arturbosch.detekt")
 }
 
 kotlin {
@@ -22,6 +23,18 @@ tasks.named("spotlessCheck") {
     dependsOn("spotlessApply")
 }
 
+detekt {
+    toolVersion = resolve("libs.versions.detekt")
+    buildUponDefaultConfig = true
+    allRules = false
+    source.setFrom(files("src/main/kotlin", "src/test/kotlin", "src/testFixtures/kotlin"))
+    rootProject.file("detekt.yml").takeIf { it.exists() }?.let { config.setFrom(files(it)) }
+}
+
+tasks.check {
+    dependsOn("detekt")
+}
+
 dependencies {
 
     implementation(platform(resolve("libs.kotlin.bom")))
@@ -35,4 +48,5 @@ dependencies {
     testImplementation(resolve("libs.kotest.runner.junit5"))
     testImplementation(resolve("libs.kotest.assertions.core"))
     testImplementation(resolve("libs.kotest.property"))
+    testImplementation(resolve("libs.konsist"))
 }

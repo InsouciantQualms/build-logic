@@ -9,4 +9,6 @@ dependencies {
     implementation(libs.spotless.plugin)
     implementation(libs.shadow.plugin)
     implementation(libs.gradle.versions.plugin)
+    implementation(libs.detekt.plugin)
+    implementation(libs.sqldelight.plugin)
 }
