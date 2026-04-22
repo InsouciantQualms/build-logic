@@ -16,7 +16,7 @@ copyFromClasspath(".editorconfig", editorConfigFile)
 
 spotless {
     kotlin {
-        ktlint("1.3.1").setEditorConfigPath(editorConfigFile)
+        ktlint("1.7.0").setEditorConfigPath(editorConfigFile)
         target("src/**/*.kt")
         targetExclude("**/build/**")
     }

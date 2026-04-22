@@ -31,7 +31,7 @@ thymeleaf = "3.1.2.RELEASE"
 kotlin-gradle-plugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
 plantuml-gradle-plugin = { module = "io.gitlab.plunts.plantuml:io.gitlab.plunts.plantuml.gradle.plugin", version = "2.3.0" }
 shadow-plugin = { module = "com.github.johnrengelman:shadow", version = "8.1.1" }
-spotless-plugin = { module = "com.diffplug.spotless:spotless-plugin-gradle", version = "6.23.3" }
+spotless-plugin = { module = "com.diffplug.spotless:spotless-plugin-gradle", version = "7.0.4" }
 gradle-versions-plugin = { module = "com.github.ben-manes.versions:com.github.ben-manes.versions.gradle.plugin", version = "0.52.0" }
 
 # API or standard Java dependencies
