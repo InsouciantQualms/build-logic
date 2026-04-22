@@ -53,9 +53,11 @@ tasks.jacocoTestReport {
     executionData.setFrom(fileTree(layout.buildDirectory.dir("jacoco")).include("**/*.exec"))
 }
 
-// Minimum coverage
+// Minimum coverage. Aggregates exec files from every tagged test variant so integration,
+// arch, and container test coverage are not silently discarded by the verification task.
 tasks.jacocoTestCoverageVerification {
     dependsOn(tasks.jacocoTestReport)
+    executionData.setFrom(fileTree(layout.buildDirectory.dir("jacoco")).include("**/*.exec"))
     violationRules {
         rule {
             limit {
