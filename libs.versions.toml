@@ -20,10 +20,10 @@ ktor = "3.1.2"
 jackson = "2.19.1"
 junit = "5.10.1"
 log4j = "2.20.0"
+jte = "3.2.1"
 resilience4j = "2.2.0"
 sqldelight = "2.0.2"
 testcontainers = "1.19.8"
-thymeleaf = "3.1.2.RELEASE"
 uuid-creator = "6.0.0"
 
 [libraries]
@@ -60,7 +60,6 @@ ktor-server-cio = { module = "io.ktor:ktor-server-cio", version.ref = "ktor" }
 ktor-server-config-yaml = { module = "io.ktor:ktor-server-config-yaml", version.ref = "ktor" }
 ktor-server-sse = { module = "io.ktor:ktor-server-sse", version.ref = "ktor" }
 ktor-server-content-negotiation = { module = "io.ktor:ktor-server-content-negotiation", version.ref = "ktor" }
-ktor-server-thymeleaf = { module = "io.ktor:ktor-server-thymeleaf", version.ref = "ktor" }
 ktor-server-status-pages = { module = "io.ktor:ktor-server-status-pages", version.ref = "ktor" }
 ktor-server-test-host = { module = "io.ktor:ktor-server-test-host", version.ref = "ktor" }
 ktor-client-core = { module = "io.ktor:ktor-client-core", version.ref = "ktor" }
@@ -153,8 +152,9 @@ jgit = { module = "org.eclipse.jgit:org.eclipse.jgit", version.ref = "jgit" }
 # Structured logging (kotlin-logging facade over slf4j)
 kotlin-logging = { module = "io.github.oshai:kotlin-logging-jvm", version.ref = "kotlin-logging" }
 
-# Templating (InstructionRenderer + HTMX responses)
-thymeleaf = { module = "org.thymeleaf:thymeleaf", version.ref = "thymeleaf" }
+# Templating (InstructionRenderer + HTMX responses) — reflection-free, precompiled
+jte = { module = "gg.jte:jte", version.ref = "jte" }
+jte-kotlin = { module = "gg.jte:jte-kotlin", version.ref = "jte" }
 
 # Markdown (HTMX UI rendering of findings and artifacts)
 commonmark = { module = "org.commonmark:commonmark", version.ref = "commonmark" }
@@ -175,3 +175,4 @@ kotlin = ["kotlin-stdlib", "kotlinx-collections-immutable", "kotlinx-serializati
 ktor = { id = "io.ktor.plugin", version.ref = "ktor" }
 detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
 sqldelight = { id = "app.cash.sqldelight", version.ref = "sqldelight" }
+jte = { id = "gg.jte.gradle", version.ref = "jte" }
