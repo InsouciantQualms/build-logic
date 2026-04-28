@@ -1,5 +1,7 @@
 @file:Suppress("UnstableApiUsage")
 
+import org.gradle.accessors.dm.LibrariesForLibs
+
 plugins {
     id("base-common")
     java
@@ -7,9 +9,11 @@ plugins {
     checkstyle
 }
 
+val libs = the<LibrariesForLibs>()
+
 java {
     toolchain {
-        languageVersion.set(JavaLanguageVersion.of(resolve("libs.versions.jdk")))
+        languageVersion.set(JavaLanguageVersion.of(libs.versions.jdk.get()))
     }
 }
 
@@ -37,7 +41,7 @@ checkstyle {
     val resourceUrl = Thread.currentThread().contextClassLoader.getResource("checkstyle.xml")
         ?: throw GradleException("Failed to load checkstyle configuration file!")
     config = resources.text.fromUri(resourceUrl)
-    toolVersion = resolve("libs.versions.checkstyle")
+    toolVersion = libs.versions.checkstyle.get()
     maxWarnings = 0
     maxErrors = 0
 }
@@ -47,8 +51,8 @@ tasks.withType<Checkstyle> {
 }
 
 dependencies {
-    compileOnly(resolve("libs.jetbrains.annotations"))
-    testImplementation(resolve("libs.junit.jupiter.engine"))
-    testRuntimeOnly(resolve("libs.junit.platform.launcher"))
-    checkstyle(resolve("libs.checkstyle"))
+    compileOnly(libs.jetbrains.annotations)
+    testImplementation(libs.junit.jupiter.engine)
+    testRuntimeOnly(libs.junit.platform.launcher)
+    checkstyle(libs.checkstyle)
 }

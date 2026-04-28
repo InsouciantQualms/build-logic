@@ -1,11 +1,15 @@
+import org.gradle.accessors.dm.LibrariesForLibs
+
 plugins {
     id("java-common")
     kotlin("jvm")
     id("io.gitlab.arturbosch.detekt")
 }
 
+val libs = the<LibrariesForLibs>()
+
 kotlin {
-    jvmToolchain(resolve("libs.versions.jdk").toInt())
+    jvmToolchain(libs.versions.jdk.get().toInt())
     compilerOptions {
         freeCompilerArgs.add("-Xcontext-parameters")
     }
@@ -27,7 +31,7 @@ tasks.named("spotlessCheck") {
 }
 
 detekt {
-    toolVersion = resolve("libs.versions.detekt")
+    toolVersion = libs.versions.detekt.get()
     buildUponDefaultConfig = true
     allRules = false
     source.setFrom(files("src/main/kotlin", "src/test/kotlin", "src/testFixtures/kotlin"))
@@ -40,16 +44,16 @@ tasks.check {
 
 dependencies {
 
-    implementation(platform(resolve("libs.kotlin.bom")))
-    implementation(platform(resolve("libs.jackson.bom")))
+    implementation(platform(libs.kotlin.bom))
+    implementation(platform(libs.jackson.bom))
 
-    implementation(resolve("libs.kotlin.stdlib"))
-    implementation(resolve("libs.kotlinx.collections.immutable"))
-    implementation(resolve("libs.kotlinx.serialization.json"))
-    implementation(resolve("libs.kotlinx.datetime"))
+    implementation(libs.kotlin.stdlib)
+    implementation(libs.kotlinx.collections.immutable)
+    implementation(libs.kotlinx.serialization.json)
+    implementation(libs.kotlinx.datetime)
 
-    testImplementation(resolve("libs.kotest.runner.junit5"))
-    testImplementation(resolve("libs.kotest.assertions.core"))
-    testImplementation(resolve("libs.kotest.property"))
-    testImplementation(resolve("libs.konsist"))
+    testImplementation(libs.kotest.runner.junit5)
+    testImplementation(libs.kotest.assertions.core)
+    testImplementation(libs.kotest.property)
+    testImplementation(libs.konsist)
 }

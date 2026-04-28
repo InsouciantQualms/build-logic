@@ -4,6 +4,8 @@ plugins {
 
 dependencies {
 
+    implementation(files(libs.javaClass.superclass.protectionDomain.codeSource.location))
+
     implementation(libs.kotlin.gradle.plugin)
     implementation(libs.plantuml.gradle.plugin)
     implementation(libs.spotless.plugin)
