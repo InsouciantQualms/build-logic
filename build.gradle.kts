@@ -13,4 +13,11 @@ dependencies {
     implementation(libs.gradle.versions.plugin)
     implementation(libs.detekt.gradle.plugin)
     implementation(libs.sqldelight.gradle.plugin)
+
+    testImplementation(libs.junit)
+    testRuntimeOnly(libs.junit.platform.launcher)
+}
+
+tasks.test {
+    useJUnitPlatform()
 }
