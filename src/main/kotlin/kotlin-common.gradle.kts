@@ -15,33 +15,25 @@ kotlin {
     }
 }
 
-val editorConfigProvider = layout.buildDirectory.file("resources/.editorconfig")
-
-// Materialize the shared .editorconfig as a declared task output so it survives `clean`
-// (a configuration-time copy is wiped by clean before spotless runs) and is regenerated
-// whenever the file goes missing. No Project receiver inside the action keeps it config-cache safe.
-val materializeEditorConfig = tasks.register("materializeEditorConfig") {
-    val dest = editorConfigProvider
-    outputs.file(dest)
-    doLast {
-        val out = dest.get().asFile
-        out.parentFile?.mkdirs()
-        val stream = Thread.currentThread().contextClassLoader.getResourceAsStream(".editorconfig")
-            ?: throw GradleException("Resource not found on classpath: .editorconfig")
-        stream.use { input -> out.outputStream().use { it.write(input.readBytes()) } }
-    }
+// Materialize the shared .editorconfig from the plugin classpath at configuration time.
+// Spotless requires the file to exist when its tasks are created, so a build/-based location
+// produced by a task deadlocks fresh checkouts (worktrees, clones): the spotless task cannot
+// be created until the file exists, and the materializing task cannot run because task
+// creation failed. The .gradle/ copy survives `clean` and is re-created whenever missing.
+val editorConfigFile = layout.projectDirectory.file(".gradle/build-logic/.editorconfig").asFile
+if (!editorConfigFile.exists()) {
+    editorConfigFile.parentFile?.mkdirs()
+    val stream = Thread.currentThread().contextClassLoader.getResourceAsStream(".editorconfig")
+        ?: throw GradleException("Resource not found on classpath: .editorconfig")
+    stream.use { input -> editorConfigFile.outputStream().use { it.write(input.readBytes()) } }
 }
 
 spotless {
     kotlin {
-        ktlint("1.7.0").setEditorConfigPath(editorConfigProvider.get().asFile)
+        ktlint("1.7.0").setEditorConfigPath(editorConfigFile)
         target("src/**/*.kt")
         targetExclude("**/build/**")
     }
-}
-
-tasks.matching { it.name.startsWith("spotless") }.configureEach {
-    dependsOn(materializeEditorConfig)
 }
 
 tasks.named("spotlessCheck") {
