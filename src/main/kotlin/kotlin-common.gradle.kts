@@ -3,16 +3,18 @@ import org.gradle.accessors.dm.LibrariesForLibs
 plugins {
     id("java-common")
     kotlin("jvm")
-    id("io.gitlab.arturbosch.detekt")
+    // detekt temporarily disabled: 1.23.7 can't parse Kotlin 2.4 source (context parameters),
+    // and only detekt 2.0.0-alpha supports Kotlin 2.4 / Gradle 9.5. Re-enable this plugin and the
+    // detekt {} / tasks.check blocks below once a stable detekt 2.x ships.
+    // id("io.gitlab.arturbosch.detekt")
 }
 
 val libs = the<LibrariesForLibs>()
 
 kotlin {
     jvmToolchain(libs.versions.jdk.get().toInt())
-    compilerOptions {
-        freeCompilerArgs.add("-Xcontext-parameters")
-    }
+    // Note: '-Xcontext-parameters' was removed — context parameters are stable and on by
+    // default as of Kotlin 2.4, so the flag is redundant and warns on every module.
 }
 
 // Materialize the shared .editorconfig from the plugin classpath at configuration time.
@@ -40,6 +42,8 @@ tasks.named("spotlessCheck") {
     dependsOn("spotlessApply")
 }
 
+// detekt temporarily disabled (Kotlin 2.4 incompatibility — see plugins block above).
+/*
 detekt {
     toolVersion = libs.versions.detekt.get()
     buildUponDefaultConfig = true
@@ -51,6 +55,7 @@ detekt {
 tasks.check {
     dependsOn("detekt")
 }
+*/
 
 dependencies {
 
