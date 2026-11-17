@@ -20,6 +20,7 @@ ktor = "3.1.2"
 jackson = "2.19.1"
 junit = "5.10.1"
 log4j = "2.20.0"
+open-java-format = "21.0.2"
 jte = "3.2.3"
 resilience4j = "2.2.0"
 sqldelight = "2.3.2"
@@ -88,6 +89,7 @@ log4j-slf4j2 = { module = "org.apache.logging.log4j:log4j-slf4j2-impl", version.
 
 # Other
 checkstyle = { module = "com.puppycrawl.tools:checkstyle", version.ref = "checkstyle" }
+open-java-format = { module = "dev.openjavaformat:open-java-format", version.ref = "open-java-format" }
 commons-io = { module = "commons-io:commons-io", version = "2.13.0" }
 ical4j = { module = "org.mnode.ical4j:ical4j", version = "4.0.2" }
 jetbrains-annotations = { module = "org.jetbrains:annotations", version = "26.0.2" }
